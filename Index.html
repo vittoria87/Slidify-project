@@ -43,20 +43,71 @@
     <!-- SLIDES -->
     <slide class="" id="slide-1" style="background:;">
   <hgroup>
-    <h2>Pitch for Shiny project</h2>
+    <h2>Introduction</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>We would like to predict Miles per gallon (mpg) for<b> mtcars</b> dataset based on cyl, disp, wt, am parameters. Please take a look on the next slide.</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="class" id="id" style="background:;">
   <hgroup>
-    <h2>Slide 2</h2>
+    <h2>Input values</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>To do this we want a user to input the following values:</p>
+
+<pre><code class="r">sidebarPanel(
+      numericInput(&#39;cyl&#39;, &#39;Number of cylinders&#39;, 4, min = 4, max = 8, step = 1),
+      numericInput(&#39;disp&#39;, &#39;Displacement (cu. in.)&#39;, 196, min = 71.0, max = 472.0, step = 1),
+      numericInput(&#39;wt&#39;, &#39;Weight&#39;, 3, min = 1.0, max = 5.0, step = 0.1),
+      radioButtons(&quot;am&quot;, &quot;Transmission&quot;, c(&quot;automatic&quot; = 0, &quot;manual&quot; = 1))
+    )
+</code></pre>
+
+<p>And print them out.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Prediction function</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We use lm() function to predict mpg value:</p>
+
+<pre><code class="r">mpgPrediction &lt;- function(cyl, disp, wt, am) {
+  fit &lt;- lm(mpg ~ cyl + disp + wt + am, data = mtcars)
+  fit$coef[1] + fit$coef[2]*cyl + fit$coef[3]*disp + fit$coef[4]*wt + fit$coef[5]*as.numeric(am)
+}
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Output</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>To output the values:</p>
+
+<pre><code class="r">shinyServer(
+  function(input, output) {
+    output$cyl &lt;- renderPrint({input$cyl})
+    output$disp &lt;- renderPrint({input$disp})
+    output$wt &lt;- renderPrint({input$wt})
+    output$am &lt;- renderPrint({input$am})
+    output$prediction &lt;- renderPrint({mpgPrediction(input$cyl, input$disp, input$wt, input$am)})
+  }
+)
+</code></pre>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -67,14 +118,26 @@
     <ul>
       <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=1 title='Pitch for Shiny project'>
+        data-slide=1 title='Introduction'>
          1
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Slide 2'>
+        data-slide=2 title='Input values'>
          2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Prediction function'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Output'>
+         4
       </a>
     </li>
   </ul>

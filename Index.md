@@ -11,12 +11,57 @@ mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
 ---
 
-## Pitch for Shiny project
+## Introduction
+
+We would like to predict Miles per gallon (mpg) for<b> mtcars</b> dataset based on cyl, disp, wt, am parameters. Please take a look on the next slide.
 
 --- .class #id 
 
-## Slide 2
+## Input values
+
+To do this we want a user to input the following values:
 
 
+```r
+sidebarPanel(
+      numericInput('cyl', 'Number of cylinders', 4, min = 4, max = 8, step = 1),
+      numericInput('disp', 'Displacement (cu. in.)', 196, min = 71.0, max = 472.0, step = 1),
+      numericInput('wt', 'Weight', 3, min = 1.0, max = 5.0, step = 0.1),
+      radioButtons("am", "Transmission", c("automatic" = 0, "manual" = 1))
+    )
+```
+    
+And print them out.
+
+--- .class #id 
+
+## Prediction function
+
+We use lm() function to predict mpg value:
 
 
+```r
+mpgPrediction <- function(cyl, disp, wt, am) {
+  fit <- lm(mpg ~ cyl + disp + wt + am, data = mtcars)
+  fit$coef[1] + fit$coef[2]*cyl + fit$coef[3]*disp + fit$coef[4]*wt + fit$coef[5]*as.numeric(am)
+}
+```
+
+--- .class #id 
+
+## Output
+
+To output the values:
+
+
+```r
+shinyServer(
+  function(input, output) {
+    output$cyl <- renderPrint({input$cyl})
+    output$disp <- renderPrint({input$disp})
+    output$wt <- renderPrint({input$wt})
+    output$am <- renderPrint({input$am})
+    output$prediction <- renderPrint({mpgPrediction(input$cyl, input$disp, input$wt, input$am)})
+  }
+)
+```
